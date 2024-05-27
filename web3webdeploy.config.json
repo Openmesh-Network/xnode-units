@@ -1,0 +1,6 @@
+{
+  "deleteUnfinishedDeploymentOnGenerate": true,
+  "defaultCreate2": true,
+  "defaultSalt": "plopmenz",
+  "exportToOriginalProject": true
+}
