@@ -1,33 +1,37 @@
 import { Address, Deployer } from "../web3webdeploy/types";
-import { DeployCounterSettings, deployCounter } from "./counters/Counter";
+import { DeployXnodeUnitSettings, deployXnodeUnit } from "./internal/XnodeUnit";
 import {
-  DeployProxyCounterSettings,
-  deployProxyCounter,
-} from "./counters/ProxyCounter";
+  DeployXnodeUnitEntitlementSettings,
+  deployXnodeUnitEntitlement,
+} from "./internal/XnodeUnitEntitlement";
 import {
-  SetInitialCounterValueSettings,
-  setInitialCounterValue,
-} from "./counters/SetInitialCounterValue";
+  DeployXnodeUnitEntitlementClaimerSettings,
+  deployXnodeUnitEntitlementClaimer,
+} from "./internal/XnodeUnitEntitlementClaimer";
 
-export interface DeploymentSettings {
-  counterSettings: DeployCounterSettings;
-  proxyCounterSettings: Omit<DeployProxyCounterSettings, "counter">;
-  setInitialCounterValueSettings: Omit<
-    SetInitialCounterValueSettings,
-    "counter"
+export interface XnodeUnitsDeploymentSettings {
+  xnodeUnitSettings: DeployXnodeUnitSettings;
+  xnodeUnitEntitlementSettings: Omit<
+    DeployXnodeUnitEntitlementSettings,
+    "xnodeUnit"
+  >;
+  xnodeUnitEntitlementClaimerSettings: Omit<
+    DeployXnodeUnitEntitlementClaimerSettings,
+    "xnodeUnitEntitlement"
   >;
   forceRedeploy?: boolean;
 }
 
-export interface Deployment {
-  counter: Address;
-  proxyCounter: Address;
+export interface XnodeUnitsDeployment {
+  xnodeUnit: Address;
+  xnodeUnitEntitlement: Address;
+  xnodeUnitEntitlementClaimer: Address;
 }
 
 export async function deploy(
   deployer: Deployer,
-  settings?: DeploymentSettings
-): Promise<Deployment> {
+  settings?: XnodeUnitsDeploymentSettings
+): Promise<XnodeUnitsDeployment> {
   if (settings?.forceRedeploy !== undefined && !settings.forceRedeploy) {
     const existingDeployment = await deployer.loadDeployment({
       deploymentName: "latest.json",
@@ -37,24 +41,28 @@ export async function deploy(
     }
   }
 
-  const counter = await deployCounter(
+  const xnodeUnit = await deployXnodeUnit(
     deployer,
-    settings?.counterSettings ?? {}
+    settings?.xnodeUnitSettings ?? {}
   );
-  const proxyCounter = await deployProxyCounter(deployer, {
-    ...(settings?.proxyCounterSettings ?? {}),
-    counter: counter,
-  });
-  await setInitialCounterValue(deployer, {
-    ...(settings?.setInitialCounterValueSettings ?? {
-      counterValue: BigInt(3),
-    }),
-    counter: counter,
+
+  const xnodeUnitEntitlement = await deployXnodeUnitEntitlement(deployer, {
+    xnodeUnit: xnodeUnit,
+    ...(settings?.xnodeUnitEntitlementSettings ?? {}),
   });
 
-  const deployment = {
-    counter: counter,
-    proxyCounter: proxyCounter,
+  const xnodeUnitEntitlementClaimer = await deployXnodeUnitEntitlementClaimer(
+    deployer,
+    {
+      xnodeUnitEntitlement: xnodeUnitEntitlement,
+      ...(settings?.xnodeUnitEntitlementClaimerSettings ?? {}),
+    }
+  );
+
+  const deployment: XnodeUnitsDeployment = {
+    xnodeUnit: xnodeUnit,
+    xnodeUnitEntitlement: xnodeUnitEntitlement,
+    xnodeUnitEntitlementClaimer: xnodeUnitEntitlementClaimer,
   };
   await deployer.saveDeployment({
     deploymentName: "latest.json",

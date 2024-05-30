@@ -1,19 +1,19 @@
 import { Address, DeployInfo, Deployer } from "../../web3webdeploy/types";
 
-export interface DeployProxyCounterSettings
+export interface DeployXnodeUnitEntitlementSettings
   extends Omit<DeployInfo, "contract" | "args"> {
-  counter: Address;
+  xnodeUnit: Address;
 }
 
-export async function deployProxyCounter(
+export async function deployXnodeUnitEntitlement(
   deployer: Deployer,
-  settings: DeployProxyCounterSettings
+  settings: DeployXnodeUnitEntitlementSettings
 ): Promise<Address> {
   return await deployer
     .deploy({
-      id: "ProxyCounter",
-      contract: "ProxyCounter",
-      args: [settings.counter],
+      id: "XnodeUnitEntitlement",
+      contract: "XnodeUnitEntitlement",
+      args: [settings.xnodeUnit],
       ...settings,
     })
     .then((deployment) => deployment.address);
