@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 
 interface IXnodeUnitEntitlement {
+    event Activated(uint256 tokenId);
+
     /// @notice Mints a token to an address.
     /// @param to The address receiving the token.
     /// @param tokenId The id of the token to be minted.

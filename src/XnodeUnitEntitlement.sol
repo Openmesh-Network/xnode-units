@@ -44,6 +44,7 @@ contract XnodeUnitEntitlement is ERC721, EIP712, AccessControl, OpenmeshENSRever
     function activate(uint256 tokenId) external {
         xnodeUnit.mint(ownerOf(tokenId), tokenId);
         _update(address(this), tokenId, msg.sender); // send entitlement token to this contract using message sender as auth
+        emit Activated(tokenId);
     }
 
     /// @inheritdoc IXnodeUnitEntitlement
@@ -51,6 +52,7 @@ contract XnodeUnitEntitlement is ERC721, EIP712, AccessControl, OpenmeshENSRever
         address signer = ECDSA.recover(_hashTypedDataV4(keccak256(abi.encode(ACTIVATE_TYPEHASH, tokenId))), v, r, s);
         xnodeUnit.mint(ownerOf(tokenId), tokenId);
         _update(address(this), tokenId, signer); // send entitlement token to this contract using signer as auth
+        emit Activated(tokenId);
     }
 
     /// @inheritdoc ERC721
