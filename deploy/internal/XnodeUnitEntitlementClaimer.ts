@@ -15,7 +15,7 @@ export async function deployXnodeUnitEntitlementClaimer(
       contract: "XnodeUnitEntitlementClaimer",
       args: [
         settings.xnodeUnitEntitlement,
-        "0xaF7E68bCb2Fc7295492A00177f14F59B92814e70",
+        "0x57b5F9b5504fb47a9E1E6D8ecc7DfEE1724F9c0a",
       ],
       ...settings,
     })

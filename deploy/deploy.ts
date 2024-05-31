@@ -8,6 +8,7 @@ import {
   DeployXnodeUnitEntitlementClaimerSettings,
   deployXnodeUnitEntitlementClaimer,
 } from "./internal/XnodeUnitEntitlementClaimer";
+import { SmartAccountBaseContract } from "../lib/openmesh-admin/lib/smart-account/export/SmartAccountBase";
 
 export interface XnodeUnitsDeploymentSettings {
   xnodeUnitSettings: DeployXnodeUnitSettings;
@@ -58,6 +59,55 @@ export async function deploy(
       ...(settings?.xnodeUnitEntitlementClaimerSettings ?? {}),
     }
   );
+
+  const xnodeUnitAbi = await deployer.getAbi("XnodeUnit");
+  const xnodeUnitEntitlementAbi = await deployer.getAbi("XnodeUnitEntitlement");
+  deployer.startContext("lib/openmesh-admin");
+  const openmeshAdminAbi = [...SmartAccountBaseContract.abi];
+  await deployer.execute({
+    id: "GrantingMintingRoles",
+    abi: openmeshAdminAbi,
+    to: "0x24496D746Fd003397790E41d0d1Ce61F4F7fd61f", // Openmesh Admin
+    function: "multicall",
+    args: [
+      [
+        deployer.viem.encodeFunctionData({
+          abi: openmeshAdminAbi,
+          functionName: "performCall",
+          args: [
+            xnodeUnit,
+            BigInt(0),
+            deployer.viem.encodeFunctionData({
+              abi: xnodeUnitAbi,
+              functionName: "grantRole",
+              args: [
+                deployer.viem.keccak256(deployer.viem.toBytes("MINT")),
+                xnodeUnitEntitlement,
+              ],
+            }),
+          ],
+        }),
+        deployer.viem.encodeFunctionData({
+          abi: openmeshAdminAbi,
+          functionName: "performCall",
+          args: [
+            xnodeUnitEntitlement,
+            BigInt(0),
+            deployer.viem.encodeFunctionData({
+              abi: xnodeUnitEntitlementAbi,
+              functionName: "grantRole",
+              args: [
+                deployer.viem.keccak256(deployer.viem.toBytes("MINT")),
+                xnodeUnitEntitlement,
+              ],
+            }),
+          ],
+        }),
+      ],
+    ],
+    from: "0x6b221aA392146E31743E1beB5827e88284B09753",
+  });
+  deployer.finishContext();
 
   const deployment: XnodeUnitsDeployment = {
     xnodeUnit: xnodeUnit,
