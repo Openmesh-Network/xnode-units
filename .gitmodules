@@ -11,3 +11,6 @@
 	path = lib/openzeppelin-contracts
 	url = https://github.com/openzeppelin/openzeppelin-contracts
 	branch = release-v5.0
+[submodule "lib/vesting"]
+	path = lib/vesting
+	url = https://github.com/Plopmenz/vesting

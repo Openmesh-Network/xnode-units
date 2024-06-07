@@ -1,5 +1,5 @@
 export const XnodeUnitContract = {
-  address: "0xa84a1cc30864514afEB1E4f9cf8440467308b892",
+  address: "0xC7f92ABB4322F59aE0E13B5a84142A5Fd22ca63a",
   abi: [
     { type: "constructor", inputs: [], stateMutability: "nonpayable" },
     {

@@ -9,6 +9,10 @@ import {
   deployXnodeUnitEntitlementClaimer,
 } from "./internal/XnodeUnitEntitlementClaimer";
 import { SmartAccountBaseContract } from "../lib/openmesh-admin/lib/smart-account/export/SmartAccountBase";
+import {
+  DeployXnodeUnitsOPENVestingSettings,
+  deployXnodeUnitsOPENVesting,
+} from "./internal/XnodeUnitsOPENVesting";
 
 export interface XnodeUnitsDeploymentSettings {
   xnodeUnitSettings: DeployXnodeUnitSettings;
@@ -20,6 +24,10 @@ export interface XnodeUnitsDeploymentSettings {
     DeployXnodeUnitEntitlementClaimerSettings,
     "xnodeUnitEntitlement"
   >;
+  xnodeUnitsOPENVestingSettings: Omit<
+    DeployXnodeUnitsOPENVestingSettings,
+    "xnodeUnit"
+  >;
   forceRedeploy?: boolean;
 }
 
@@ -27,6 +35,7 @@ export interface XnodeUnitsDeployment {
   xnodeUnit: Address;
   xnodeUnitEntitlement: Address;
   xnodeUnitEntitlementClaimer: Address;
+  xnodeUnitsOPENVesting: Address;
 }
 
 export async function deploy(
@@ -109,10 +118,16 @@ export async function deploy(
   });
   deployer.finishContext();
 
+  const xnodeUnitsOPENVesting = await deployXnodeUnitsOPENVesting(deployer, {
+    xnodeUnit: xnodeUnit,
+    ...(settings?.xnodeUnitsOPENVestingSettings ?? {}),
+  });
+
   const deployment: XnodeUnitsDeployment = {
     xnodeUnit: xnodeUnit,
     xnodeUnitEntitlement: xnodeUnitEntitlement,
     xnodeUnitEntitlementClaimer: xnodeUnitEntitlementClaimer,
+    xnodeUnitsOPENVesting: xnodeUnitsOPENVesting,
   };
   await deployer.saveDeployment({
     deploymentName: "latest.json",

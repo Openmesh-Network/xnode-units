@@ -1,5 +1,5 @@
 export const XnodeUnitEntitlementContract = {
-  address: "0x36dCD679652E484786d4b94621B36d61c17F5Dac",
+  address: "0x5d333CF91Ab662BeBD8E12fC45A083Fb8E653B85",
   abi: [
     {
       type: "constructor",
@@ -274,6 +274,19 @@ export const XnodeUnitEntitlementContract = {
         { name: "", type: "address", internalType: "contract IXnodeUnit" },
       ],
       stateMutability: "view",
+    },
+    {
+      type: "event",
+      name: "Activated",
+      inputs: [
+        {
+          name: "tokenId",
+          type: "uint256",
+          indexed: false,
+          internalType: "uint256",
+        },
+      ],
+      anonymous: false,
     },
     {
       type: "event",
