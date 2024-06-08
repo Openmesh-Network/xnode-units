@@ -107,7 +107,7 @@ export async function deploy(
               functionName: "grantRole",
               args: [
                 deployer.viem.keccak256(deployer.viem.toBytes("MINT")),
-                xnodeUnitEntitlement,
+                xnodeUnitEntitlementClaimer,
               ],
             }),
           ],
